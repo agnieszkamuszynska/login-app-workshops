@@ -9,3 +9,8 @@ yarn-error.log*
 
 .vscode/*
 node_modules/
+dist/
+backend/auth/__pycache__/
+/backend/__pycache__/
+.idea/
+
