@@ -8,9 +8,11 @@ app = FastAPI()
 @app.post("/login", response_model=LoginResponse)
 def login(request: LoginRequest):
     print("Incoming login:", request.email, request.password)
+    if not request.email or not request.password:
+        raise HTTPException(status_code=400, detail="Bad request")
     token = authenticate_user(request.email, request.password)
     if not token:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=401, detail="User not authorized")
     return {"token": token}
 
 app.add_middleware(
