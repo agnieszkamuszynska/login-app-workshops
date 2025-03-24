@@ -1,11 +1,15 @@
 import LoginForm from "./components/LoginForm";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import WelcomeDashboard from "./components/WelcomeDashboard";
 
 function App() {
     return (
-        <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-            <h1>Welcome! – Please Log In</h1>
-            <LoginForm />
-        </div>
+        <Router>
+            <Routes>
+                <Route path="/" element={<LoginForm />} />
+                <Route path="/dashboard" element={<WelcomeDashboard />} />
+            </Routes>
+        </Router>
     );
 }
 

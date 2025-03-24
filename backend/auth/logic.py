@@ -6,6 +6,7 @@ import os
 users_db = {
       "alice@example.com": {
           "id": 1,
+          "name": "Alice",
           "email": "alice@example.com",
           "password": "password123"
       }
@@ -22,5 +23,5 @@ def authenticate_user(email: str, password: str) -> str | None:
     if not user or password != user["password"]:
         return None
 
-    token = jwt.encode({"user_id": user["id"]}, SECRET_KEY, algorithm="HS256")
+    token = jwt.encode({"user_id": user["id"], "user_name": user["name"]}, SECRET_KEY, algorithm="HS256")
     return token
