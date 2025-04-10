@@ -1,0 +1,31 @@
+[
+    {
+      "name": "Valid login",
+      "request": {
+        "body": {
+          "email": "alice@example.com",
+          "password": "password123"
+        }
+      },
+      "response": {
+        "status_code": 200
+      },
+      "verify_token": true,
+      "token_payload": {
+        "user_id": 1,
+        "user_name": "Alice"
+      }
+    },
+    {
+      "name": "Invalid password",
+      "request": {
+        "body": {
+          "email": "alice@example.com",
+          "password": "wrong_password"
+        }
+      },
+      "response": {
+        "status_code": 401
+      }
+    }
+  ]
