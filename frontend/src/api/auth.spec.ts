@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach, jest } from '@jest/globals';
-import { loginUser } from './auth.js'; // Note the .js extension for ESM
+import { loginUser } from './auth.js';
 
 const mockedFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
 globalThis.fetch = mockedFetch;
@@ -17,7 +17,6 @@ describe('loginUser', () => {
 //   It handles API responses appropriately
 
   test('should return token on successful login', async () => {
-    // Mock successful response with token
     mockedFetch.mockResolvedValueOnce({
         ok: true,
         status: 200,
@@ -36,7 +35,6 @@ describe('loginUser', () => {
 
   //verifying that your client properly displays whatever error the server sends
   test('should throw error with server message on login failure', async () => {
-    // Mock failed response
     mockedFetch.mockResolvedValueOnce({
       ok: false,
       status: 400,
@@ -48,7 +46,6 @@ describe('loginUser', () => {
   });
 
   test('should throw default error message on login failure without detail', async () => {
-    // Mock failed response without detail
     mockedFetch.mockResolvedValueOnce({
       ok: false,
       status: 400,
@@ -60,7 +57,6 @@ describe('loginUser', () => {
   });
   
   test('should throw standardized error message on network failure', async () => {
-    // Mock network error
     mockedFetch.mockRejectedValueOnce(new TypeError('Network error'));
 
     await expect(loginUser('test@example.com', 'password'))
@@ -68,7 +64,6 @@ describe('loginUser', () => {
   });
 
   test('should propagate other errors', async () => {
-    // Mock other type of error
     const error = new Error('Some other error');
     mockedFetch.mockRejectedValueOnce(error);
 

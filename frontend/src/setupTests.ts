@@ -1,9 +1,7 @@
 import '@testing-library/jest-dom';
 import 'core-js/stable';
 
-// Add TextEncoder/TextDecoder polyfills without importing from util
 if (typeof globalThis.TextEncoder === 'undefined') {
-  // Simple polyfill implementation
   globalThis.TextEncoder = class TextEncoder {
     encode(input = ''): Uint8Array {
       const arr = new Uint8Array(input.length);
