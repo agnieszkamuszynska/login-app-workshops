@@ -22,6 +22,7 @@ uvicorn main:app --reload
 Setup instructions -> [Frontend setup guide](frontend/README.md)
 ```bash
 cd frontend
+npm install
 npm run build
 npm run dev
 ```
