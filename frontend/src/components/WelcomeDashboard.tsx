@@ -39,7 +39,7 @@ function WelcomeDashboard() {
         setToken("");
         setUserId(null);
         setUserName(null);
-        navigate("/");
+        navigate("/login");
     };
 
     return (

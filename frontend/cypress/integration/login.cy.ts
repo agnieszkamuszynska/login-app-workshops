@@ -59,7 +59,10 @@ describe('Login Page', () => {
     });
   });
 
+  // good example  with comparing unit and integration tests and why we should keep both 
   context('Authentication flow', () => {
+
+   // ths can be moved to the all flow as we have in the last test
     it('redirects to dashboard after successful login', () => {
       cy.fixture('users.json').then((users: Users) => {
 
@@ -70,6 +73,8 @@ describe('Login Page', () => {
         cy.wait('@loginRequest');
 
         cy.url().should('include', '/dashboard');
+        // here should we check also if we  see correct dashbord
+        // example: Welcome, {userName} is visible
       });
     });
 

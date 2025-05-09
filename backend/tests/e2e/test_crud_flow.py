@@ -20,7 +20,12 @@ class TestLoginWorkflow:
         token = login_response.json()["token"]
         logger.info("Login successful, obtained token")
 
-        # end-to-end authentication flow
+        # makes a real get request for our endpoint
+
+        # uses token from the header
+        # This part of the test verifies that after login,
+        # the application correctly implements token-based authorization
+        # for protected resources.
         resource_response = requests.get(
             f"{BASE_URL}/protected-resource",
             headers={"Authorization": f"Bearer {token}"}

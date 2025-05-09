@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 # Using TestClient to simulate HTTP requests
 client = TestClient(app)
 
+# This testing API endpoints, checkking HTTP status codes and token contents
+
 
 class ApiTest:
     """Base class for API tests using JSON test data"""
@@ -52,6 +54,7 @@ class TestAuth(ApiTest):
                 data = response.json()
                 assert "token" in data
 
+                #  validating the contents of a JWT token returned by the API endpoint
                 token = data["token"]
                 payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
 

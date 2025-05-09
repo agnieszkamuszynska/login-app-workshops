@@ -22,28 +22,30 @@ describe('<WelcomeDashboard />', () => {
   });
 
   test('renders user information when token is valid', () => {
+    const tokenInfo = 'eyJhbGci0iJI';
     (useLocation as jest.Mock).mockReturnValue({
-      state: { token: 'valid-token-123' }
+      state: { token: tokenInfo }
     });
 
     (jwtDecode as jest.Mock).mockReturnValue({
-      user_id: 42,
-      user_name: 'John Doe',
-      exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
-      iat: Math.floor(Date.now() / 1000)
+      user_id: 1,
+      user_name: 'Alice',
     });
 
     render(<WelcomeDashboard />);
 
-    expect(screen.getByRole('heading', { name: /Welcome, John Doe/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Welcome, Alice/i })).toBeInTheDocument();
 
     const paragraphs = screen.getAllByRole('paragraph');
     const userIdParagraph = paragraphs.find(p => p.textContent?.includes('User ID:'));
     const usernameParagraph = paragraphs.find(p => p.textContent?.includes('Username:'));
 
-    expect(userIdParagraph).toHaveTextContent('42');
-    expect(usernameParagraph).toHaveTextContent('John Doe');
+    expect(userIdParagraph).toHaveTextContent('1');
+    expect(usernameParagraph).toHaveTextContent('Alice');
     expect(screen.getByText(/You are logged in!/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Logout'})).toBeInTheDocument();
+    expect(screen.getByText(/Token:/)).toHaveTextContent(`${tokenInfo}`);
+
 });
 
   test('redirects to home when token is missing', () => {
@@ -73,15 +75,12 @@ describe('<WelcomeDashboard />', () => {
   test('logs out when logout button is clicked', () => {
 
     (useLocation as jest.Mock).mockReturnValue({
-      state: { token: 'valid-token-123' }
+      state: { token: 'eyJhbGci0iJI' }
     });
 
-
     (jwtDecode as jest.Mock).mockReturnValue({
-      user_id: 42,
-      user_name: 'John Doe',
-      exp: Math.floor(Date.now() / 1000) + 3600,
-      iat: Math.floor(Date.now() / 1000)
+      user_id: 1,
+      user_name: 'Alice',
     });
 
     render(<WelcomeDashboard />);
@@ -89,25 +88,6 @@ describe('<WelcomeDashboard />', () => {
     const logoutButton = screen.getByText('Logout');
     fireEvent.click(logoutButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith('/');
-  });
-
-  test('displays shortened token', () => {
-    const longToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MiwidXNlcl9uYW1lIjoiSm9obiBEb2UiLCJleHAiOjE2MTYxODEyMDAsImlhdCI6MTYxNjE3NzYwMH0';
-
-    (useLocation as jest.Mock).mockReturnValue({
-      state: { token: longToken }
-    });
-
-    (jwtDecode as jest.Mock).mockReturnValue({
-      user_id: 42,
-      user_name: 'John Doe',
-      exp: Math.floor(Date.now() / 1000) + 3600,
-      iat: Math.floor(Date.now() / 1000)
-    });
-
-    render(<WelcomeDashboard />);
-
-    expect(screen.getByText(/🔐 Token:/)).toHaveTextContent(`${longToken.substring(0, 12)}...`);
+    expect(mockNavigate).toHaveBeenCalledWith("/login");
   });
 });

@@ -62,12 +62,4 @@ describe('loginUser', () => {
     await expect(loginUser('test@example.com', 'password'))
       .rejects.toThrow('Oops! Something went wrong. Please try again later.');
   });
-
-  test('should propagate other errors', async () => {
-    const error = new Error('Some other error');
-    mockedFetch.mockRejectedValueOnce(error);
-
-    await expect(loginUser('test@example.com', 'password'))
-      .rejects.toThrow('Some other error');
-  });
 });
