@@ -4,6 +4,10 @@ import { DashboardPage } from "../pages/DashbordPage.cy";
 const loginPage = new LoginPage();
 const dashboardPage = new DashboardPage();
 
+
+// These tests take a lot of time. They use real browsers, real databases, and real servers.
+// slow and expensive
+// sensitive, and even a small delay can cause them to break
 describe('Login Application E2E Flow', () => {
   before(() => {
     cy.task('setupTestUsers', {

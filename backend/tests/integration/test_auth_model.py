@@ -1,62 +1,59 @@
-import json
 import logging
-import os
+import jwt
+from fastapi.testclient import TestClient
 
 from backend.auth.logic import SECRET_KEY
 from backend.main import app
 
-from fastapi.testclient import TestClient
 
-import jwt
-
-
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Using TestClient to simulate HTTP requests
 client = TestClient(app)
 
+
 # This testing API endpoints, checkking HTTP status codes and token contents
+def test_successful_login():
+    """Test that valid credentials return a token with correct payload"""
+    # Log available routes for debugging
+    for route in app.routes:
+        logger.info(f"{route.methods} {route.path}")
+
+    request_data = {
+        "email": "alice@example.com",
+        "password": "password123"
+    }
+
+    # Send request to login endpoint
+    response = client.post("/login", json=request_data)
+
+    # Assert status code
+    assert response.status_code == 200
+
+    # Validate response structure
+    data = response.json()
+    assert "token" in data
+
+    # Decode and validate token contents
+    token = data["token"]
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+
+    # Validate token payload
+    assert payload["user_id"] == 1
+    assert payload["user_name"] == "Alice"
 
 
-class ApiTest:
-    """Base class for API tests using JSON test data"""
-    test_data_dir = os.path.dirname(__file__)
+def test_failed_login():
+    """Test that invalid credentials return 401 Unauthorized"""
+    # Test data
+    request_data = {
+        "email": "alice@example.com",
+        "password": "wrong_password"
+    }
 
-    def load_test_cases(self, filename):
-        filepath = os.path.join(self.test_data_dir, filename)
-        with open(filepath, 'r') as f:
-            return json.load(f)
+    # Send request to login endpoint
+    response = client.post("/login", json=request_data)
 
-
-class TestAuth(ApiTest):
-    def test_authentication(self):
-        test_cases = self.load_test_cases("test_auth_model.json")
-
-        for route in app.routes:
-            logger.info(f"{route.methods} {route.path}")
-
-        for case in test_cases:
-            test_name = case.get('name', 'Unnamed test')
-            logger.info(f"Running test case: {test_name}")
-
-            # Making an HTTP POST request to an endpoint
-            response = client.post(
-                "/login",
-                json=case["request"]["body"]
-            )
-            # Verifying HTTP status code
-            assert response.status_code == case["response"]["status_code"]
-
-            if response.status_code == 200 and case.get("verify_token", False):
-                # Checking response body structure
-                data = response.json()
-                assert "token" in data
-
-                #  validating the contents of a JWT token returned by the API endpoint
-                token = data["token"]
-                payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-
-                for key, value in case["token_payload"].items():
-                    assert payload[key] == value
+    # Assert status code
+    assert response.status_code == 401

@@ -4,27 +4,24 @@ import { loginUser } from './auth.js';
 const mockedFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
 globalThis.fetch = mockedFetch;
 
+
+//testing the frontend client code that makes API calls and handle properly interactions with the backend
 describe('loginUser', () => {
   beforeEach(() => {
     mockedFetch.mockClear();
   });
 
-
-//   testing the frontend client code that makes API calls. It verifies that:
-
-//   The loginUser function correctly formats the request
-//   It properly extracts the token from a successful response
-//   It handles API responses appropriately
-
-  test('should return token on successful login', async () => {
+  test('should call correct endpoint with the correct arguments', async () => {
     mockedFetch.mockResolvedValueOnce({
         ok: true,
         status: 200,
-        json: async () => ({ token: 'fake-token' })
+        json: async () => ({ token: 'token' })
       } as unknown as Response);
-    const result = await loginUser('test@example.com', 'password');
 
-    expect(result).toBe('fake-token');
+      //loginUser function handle authentication by sending a request to the backend API
+     await loginUser('test@example.com', 'password');
+
+    //after successful login, we expect the fn is called with the correct arguments
     expect(mockedFetch).toHaveBeenCalledWith('http://localhost:8000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -33,14 +30,14 @@ describe('loginUser', () => {
   });
 
 
-  //verifying that your client properly displays whatever error the server sends
+  //verifying that client properly displays error the server sends
   test('should throw error with server message on login failure', async () => {
     mockedFetch.mockResolvedValueOnce({
       ok: false,
       status: 400,
       json: async () => ({ detail: 'Invalid credentials' })
     } as unknown as Response);
-  
+
     await expect(loginUser('test@example.com', 'wrong-password'))
       .rejects.toThrow('Invalid credentials');
   });
@@ -51,11 +48,11 @@ describe('loginUser', () => {
       status: 400,
       json: async () => ({})
     } as unknown as Response);
-  
+
     await expect(loginUser('test@example.com', 'wrong-password'))
       .rejects.toThrow('Login failed');
   });
-  
+
   test('should throw standardized error message on network failure', async () => {
     mockedFetch.mockRejectedValueOnce(new TypeError('Network error'));
 

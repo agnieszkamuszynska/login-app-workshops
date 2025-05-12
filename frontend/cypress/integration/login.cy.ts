@@ -59,7 +59,7 @@ describe('Login Page', () => {
     });
   });
 
-  // good example  with comparing unit and integration tests and why we should keep both 
+
   context('Authentication flow', () => {
 
    // ths can be moved to the all flow as we have in the last test
@@ -112,10 +112,13 @@ describe('Login Page', () => {
         loginPage.submitButton.click();
 
         cy.wait('@validationRequest');
+        //make sure the app sends the right request, with the right data, and the API accepts it
         cy.get('@requestBody').should('deep.equal', {
           email: users.testUser.email,
           password: users.testUser.password
         });
+        // here we can check if we got confirmation from UI side that we are logged in
+        // example: Welcome, {userName} is visible
       });
     });
   });

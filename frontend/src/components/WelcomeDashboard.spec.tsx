@@ -48,6 +48,8 @@ describe('<WelcomeDashboard />', () => {
 
 });
 
+
+//we handle scenarios where the token is missing or invalid
   test('redirects to home when token is missing', () => {
     (useLocation as jest.Mock).mockReturnValue({
       state: null
@@ -72,6 +74,7 @@ describe('<WelcomeDashboard />', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
 
+  // redirecting to the login page when the logout button is clicked
   test('logs out when logout button is clicked', () => {
 
     (useLocation as jest.Mock).mockReturnValue({
@@ -87,6 +90,12 @@ describe('<WelcomeDashboard />', () => {
 
     const logoutButton = screen.getByText('Logout');
     fireEvent.click(logoutButton);
+
+    // we check only if the navigate function is called with the correct path
+    // Doesn't actually change any browser URL
+    // Doesn't verify that the router configuration handle this navigation
+    // Doesn't confirm the route actually exists
+    // Doesn't test any interrupt the navigation
 
     expect(mockNavigate).toHaveBeenCalledWith("/login");
   });
