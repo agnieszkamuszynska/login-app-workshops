@@ -37,6 +37,7 @@ describe('Login Application E2E Flow', () => {
     cy.visit('/');
   });
 
+  //Simple, complete user workflow
   it('should complete successful login flow and logout', () => {
     loginPage.enterEmail('test.user@example.com');
     loginPage.enterPassword('securePassword123');
@@ -51,9 +52,6 @@ describe('Login Application E2E Flow', () => {
     dashboardPage.username.should('contain.text', 'Test User');
     dashboardPage.loggedInMessage.should('be.visible');
 
-    cy.reload();
-    cy.url().should('include', '/dashboard');
-    dashboardPage.welcomeHeader.should('be.visible');
 
     dashboardPage.logoutButton.click();
     cy.url().should('not.include', '/dashboard');

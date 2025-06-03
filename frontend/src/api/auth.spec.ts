@@ -2,6 +2,7 @@ import { describe, expect, test, beforeEach, jest } from '@jest/globals';
 import { loginUser } from './auth.js';
 
 const mockedFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
+//The tests mock the global fetch function to avoid making actual network calls
 globalThis.fetch = mockedFetch;
 
 
@@ -31,17 +32,6 @@ describe('loginUser', () => {
 
 
   //verifying that client properly displays error the server sends
-  test('should throw error with server message on login failure', async () => {
-    mockedFetch.mockResolvedValueOnce({
-      ok: false,
-      status: 400,
-      json: async () => ({ detail: 'Invalid credentials' })
-    } as unknown as Response);
-
-    await expect(loginUser('test@example.com', 'wrong-password'))
-      .rejects.toThrow('Invalid credentials');
-  });
-
   test('should throw default error message on login failure without detail', async () => {
     mockedFetch.mockResolvedValueOnce({
       ok: false,

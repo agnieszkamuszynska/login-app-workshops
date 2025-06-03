@@ -12,11 +12,7 @@ class TestAuthentication:
         # Verify token is returned
         assert token is not None
 
-        # Decode the token to verify expected user information
-        # This confirms:
-        # The function produces a token when given valid credentials
-        # The token contains the expected data
-        # The token is properly signed with the correct algorithm
+        #No HTTP request is made
 
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         assert payload["user_id"] == 1

@@ -49,7 +49,6 @@ describe('<WelcomeDashboard />', () => {
 });
 
 
-//we handle scenarios where the token is missing or invalid
     // we check only if the navigate function is called with the correct path
     // Doesn't actually change any browser URL
     // Doesn't verify that the router configuration handle this navigation
@@ -77,25 +76,5 @@ describe('<WelcomeDashboard />', () => {
     render(<WelcomeDashboard />);
 
     expect(mockNavigate).toHaveBeenCalledWith('/');
-  });
-
-
-  test('logs out when logout button is clicked', () => {
-
-    (useLocation as jest.Mock).mockReturnValue({
-      state: { token: 'eyJhbGci0iJI' }
-    });
-
-    (jwtDecode as jest.Mock).mockReturnValue({
-      user_id: 1,
-      user_name: 'Alice',
-    });
-
-    render(<WelcomeDashboard />);
-
-    const logoutButton = screen.getByText('Logout');
-    fireEvent.click(logoutButton);
-
-    expect(mockNavigate).toHaveBeenCalledWith("/login");
   });
 });

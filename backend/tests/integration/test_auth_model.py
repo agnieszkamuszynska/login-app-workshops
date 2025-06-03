@@ -9,16 +9,17 @@ from backend.main import app
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Using TestClient to simulate HTTP requests
+# Using TestClient to simulate HTTP requests,
+# Doesn't use actual network connections
 client = TestClient(app)
 
 
-# This testing API endpoints, checkking HTTP status codes and token contents
+# Focus on API endpoint behavior and HTTP interactions
+# check if system works correctly when all parts are connected
 def test_successful_login():
     """Test that valid credentials return a token with correct payload"""
-    # Log available routes for debugging
-    for route in app.routes:
-        logger.info(f"{route.methods} {route.path}")
+
+    #Verifies the entire flow from HTTP request → response
 
     request_data = {
         "email": "alice@example.com",
@@ -28,14 +29,11 @@ def test_successful_login():
     # Send request to login endpoint
     response = client.post("/login", json=request_data)
 
-    # Assert status code
     assert response.status_code == 200
 
-    # Validate response structure
     data = response.json()
     assert "token" in data
 
-    # Decode and validate token contents
     token = data["token"]
     payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
 

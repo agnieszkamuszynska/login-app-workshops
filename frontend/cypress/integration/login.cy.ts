@@ -42,7 +42,35 @@ describe('Login Page', () => {
     }).as('loginRequest');
   });
 
-  // bad practice
+  context('API interaction', () => {
+    it('sends correct request payload', () => {
+      cy.fixture('users.json').then((users: Users) => {
+        cy.intercept('POST', 'http://localhost:8000/login', (req) => {
+          cy.wrap(req.body).as('requestBody');
+          cy.wrap(req.headers).as('requestHeaders');
+
+          req.reply({
+            statusCode: 200,
+            body: { token: 'test-token' }
+          });
+        }).as('validationRequest');
+
+        loginPage.emailInput.type(users.testUser.email);
+        loginPage.passwordInput.type(users.testUser.password);
+        loginPage.submitButton.click();
+
+        cy.wait('@validationRequest');
+        //make sure the app sends the right request, with the right data, and the API accepts it
+        cy.get('@requestBody').should('deep.equal', {
+          email: users.testUser.email,
+          password: users.testUser.password
+        });
+        // here we can check if we got confirmation from UI side that we are logged in
+        // example: Welcome, {userName} is visible
+      });
+    });
+
+     // bad practice
   context('Form validation', () => {
     it('validates required fields', () => {
       loginPage.submitButton.click();
@@ -61,7 +89,6 @@ describe('Login Page', () => {
 
 
   context('Authentication flow', () => {
-
    // ths can be moved to the all flow as we have in the last test
     it('redirects to dashboard after successful login', () => {
       cy.fixture('users.json').then((users: Users) => {
@@ -93,33 +120,5 @@ describe('Login Page', () => {
       });
     });
   });
-
-  context('API interaction', () => {
-    it('sends correct request payload', () => {
-      cy.fixture('users.json').then((users: Users) => {
-        cy.intercept('POST', 'http://localhost:8000/login', (req) => {
-          cy.wrap(req.body).as('requestBody');
-          cy.wrap(req.headers).as('requestHeaders');
-
-          req.reply({
-            statusCode: 200,
-            body: { token: 'test-token' }
-          });
-        }).as('validationRequest');
-
-        loginPage.emailInput.type(users.testUser.email);
-        loginPage.passwordInput.type(users.testUser.password);
-        loginPage.submitButton.click();
-
-        cy.wait('@validationRequest');
-        //make sure the app sends the right request, with the right data, and the API accepts it
-        cy.get('@requestBody').should('deep.equal', {
-          email: users.testUser.email,
-          password: users.testUser.password
-        });
-        // here we can check if we got confirmation from UI side that we are logged in
-        // example: Welcome, {userName} is visible
-      });
-    });
   });
 });
