@@ -42,53 +42,6 @@ describe('Login Page', () => {
     }).as('loginRequest');
   });
 
-  // bad practice
-  context('Form validation', () => {
-    it('validates required fields', () => {
-      loginPage.submitButton.click();
-
-      cy.contains('Email is required').should('be.visible');
-      cy.contains('Password is required').should('be.visible');
-    });
-
-    it('validates email format', () => {
-      loginPage.emailInput.type('invalid-email');
-
-      loginPage.submitButton.click();
-      cy.contains('Please enter a valid email').should('be.visible');
-    });
-  });
-
-  context('Authentication flow', () => {
-    it('redirects to dashboard after successful login', () => {
-      cy.fixture('users.json').then((users: Users) => {
-
-        loginPage.emailInput.type(users.validUser.email);
-        loginPage.passwordInput.type(users.validUser.password);
-        loginPage.submitButton.click();
-
-        cy.wait('@loginRequest');
-
-        cy.url().should('include', '/dashboard');
-      });
-    });
-
-    it('shows error message after failed login', () => {
-      cy.fixture('users.json').then((users: Users) => {
-
-        loginPage.emailInput.type(users.invalidUser.email);
-        loginPage.passwordInput.type(users.invalidUser.password);
-        loginPage.submitButton.click();
-
-        cy.wait('@loginRequest');
-
-        cy.contains('Invalid credentials').should('be.visible');
-
-        loginPage.emailInput.should('have.value', users.invalidUser.email);
-      });
-    });
-  });
-
   context('API interaction', () => {
     it('sends correct request payload', () => {
       cy.fixture('users.json').then((users: Users) => {
@@ -107,11 +60,65 @@ describe('Login Page', () => {
         loginPage.submitButton.click();
 
         cy.wait('@validationRequest');
+        //make sure the app sends the right request, with the right data, and the API accepts it
         cy.get('@requestBody').should('deep.equal', {
           email: users.testUser.email,
           password: users.testUser.password
         });
+        // here we can check if we got confirmation from UI side that we are logged in
+        // example: Welcome, {userName} is visible
       });
     });
+
+     // bad practice
+  context('Form validation', () => {
+    it('validates required fields', () => {
+      loginPage.submitButton.click();
+
+      cy.contains('Email is required').should('be.visible');
+      cy.contains('Password is required').should('be.visible');
+    });
+
+    it('validates email format', () => {
+      loginPage.emailInput.type('invalid-email');
+
+      loginPage.submitButton.click();
+      cy.contains('Please enter a valid email').should('be.visible');
+    });
+  });
+
+
+  context('Authentication flow', () => {
+   // ths can be moved to the all flow as we have in the last test
+    it('redirects to dashboard after successful login', () => {
+      cy.fixture('users.json').then((users: Users) => {
+
+        loginPage.emailInput.type(users.validUser.email);
+        loginPage.passwordInput.type(users.validUser.password);
+        loginPage.submitButton.click();
+
+        cy.wait('@loginRequest');
+
+        cy.url().should('include', '/dashboard');
+        // here should we check also if we  see correct dashbord
+        // example: Welcome, {userName} is visible
+      });
+    });
+
+    it('shows error message after failed login', () => {
+      cy.fixture('users.json').then((users: Users) => {
+
+        loginPage.emailInput.type(users.invalidUser.email);
+        loginPage.passwordInput.type(users.invalidUser.password);
+        loginPage.submitButton.click();
+
+        cy.wait('@loginRequest');
+
+        cy.contains('Invalid credentials').should('be.visible');
+
+        loginPage.emailInput.should('have.value', users.invalidUser.email);
+      });
+    });
+  });
   });
 });

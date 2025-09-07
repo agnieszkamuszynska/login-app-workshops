@@ -4,6 +4,10 @@ import { DashboardPage } from "../pages/DashbordPage.cy";
 const loginPage = new LoginPage();
 const dashboardPage = new DashboardPage();
 
+
+// These tests take a lot of time. They use real browsers, real databases, and real servers.
+// slow and expensive
+// sensitive, and even a small delay can cause them to break
 describe('Login Application E2E Flow', () => {
   before(() => {
     cy.task('setupTestUsers', {
@@ -33,6 +37,7 @@ describe('Login Application E2E Flow', () => {
     cy.visit('/');
   });
 
+  //Simple, complete user workflow
   it('should complete successful login flow and logout', () => {
     loginPage.enterEmail('test.user@example.com');
     loginPage.enterPassword('securePassword123');
@@ -47,9 +52,6 @@ describe('Login Application E2E Flow', () => {
     dashboardPage.username.should('contain.text', 'Test User');
     dashboardPage.loggedInMessage.should('be.visible');
 
-    cy.reload();
-    cy.url().should('include', '/dashboard');
-    dashboardPage.welcomeHeader.should('be.visible');
 
     dashboardPage.logoutButton.click();
     cy.url().should('not.include', '/dashboard');

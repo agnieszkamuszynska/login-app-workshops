@@ -25,12 +25,16 @@ describe('<LoginForm />', () => {
 
     expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
-    expect(screen.getByText('Login')).toBeInTheDocument();
-    expect(screen.getByTestId('submit-button')).toBeInTheDocument();
+    expect(screen.getByText('Login In')).toBeInTheDocument();
+    expect(screen.getByText('Enter your email and password')).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Login'})).toBeInTheDocument();
   });
 
   test('shows required error when form is submitted with empty email', async () => {
     render(<LoginForm />);
+
+    const passwordInput = screen.getByTestId('password-input');
+    fireEvent.change(passwordInput, { target: { value: 'short' } });
 
     const submitButton = screen.getByTestId('submit-button');
     fireEvent.click(submitButton);
@@ -43,6 +47,8 @@ describe('<LoginForm />', () => {
 
     const emailInput = screen.getByTestId('email-input');
     fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+    const passwordInput = screen.getByTestId('password-input');
+    fireEvent.change(passwordInput, { target: { value: 'short' } });
 
     const submitButton = screen.getByTestId('submit-button');
     fireEvent.click(submitButton);

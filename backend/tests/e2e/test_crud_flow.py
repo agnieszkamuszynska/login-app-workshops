@@ -18,12 +18,11 @@ class TestLoginWorkflow:
 
         assert login_response.status_code == 200
         token = login_response.json()["token"]
-        logger.info("Login successful, obtained token")
 
-        # end-to-end authentication flow
+        # get a token from the header, and then
         resource_response = requests.get(
             f"{BASE_URL}/protected-resource",
             headers={"Authorization": f"Bearer {token}"}
         )
+
         assert resource_response.status_code == 200
-        logger.info("Successfully accessed protected resource with token")
